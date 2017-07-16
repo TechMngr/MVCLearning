@@ -2417,12 +2417,37 @@ function init_calendar() {
             center: 'title',
             right: 'next,nextYear'
         },
-        defaultView: 'month',
+       
+        showNonCurrentDates :true,
+      
         fixedWeekCount: false,
+        firstDay: 1,
         selectable: true,
-        selectHelper: true,
+        dayRender: function(date, cell){
+            var Holidays = new Array();
+            var Holidays = $("#hfdHolidays").val().split(",");
+       
+            if ($.inArray(date.format(), Holidays) != -1) {
+                debugger;
+                $(cell).addClass('fc-Holiday');
+            }
+        },
+
         select: function (start, end, allDay) {
-           
+            debugger;
+            var Holidays = new Array();
+            var Holidays = $("#hfdHolidays").val().split(",");
+            
+            if ($.inArray(start.format(), Holidays) != -1)
+            {
+                ShowMessage("You can not apply leave for holiday", "info");
+                return;
+            }
+            if (start.format('dddd') == "Saturday" || start.format('dddd') == "Sunday") {
+                ShowMessage("You can not apply leave for week end.", "info");
+                return;
+            }
+
             if ($('#drpLeaveTypeId').val() == 0) {
                 ShowMessage("Please select Leave and Leave Type", "info");
                 return;
@@ -2445,6 +2470,7 @@ function init_calendar() {
             }
                
             $('#fc_create').click();
+            debugger;
             started = start;
             ended = end;
 
@@ -2459,7 +2485,7 @@ function init_calendar() {
 
                 // code to add leave in database
                 var LeaveObj = new Object();
-                LeaveObj.EmployeeId = "1";
+                LeaveObj.EmployeeId =$('#hdfUserID').val();
                 LeaveObj.LeaveTypeId = $('#drpLeaveTypeId').val();
                 LeaveObj.UxLeaveTypeId = $('#drpSubLeaveType').val();
                 LeaveObj.StartDate = started;;
@@ -2468,7 +2494,17 @@ function init_calendar() {
                 LeaveObj.LeaveDescription = title;
 
                 $.ajax({
-
+                    url: "ApplyLeave",
+                    type : "Post",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(LeaveObj),
+                    dataType : "json",
+                    success: function ( response ) {
+                        ShowMessage("Leave Applied Successfully", "success");
+                    },
+                    error : function(){
+                        alert('hi');
+                    }
                 });
 
 
@@ -2477,6 +2513,7 @@ function init_calendar() {
 
 
                 if (title) {
+                    debugger;
                     calendar.fullCalendar('renderEvent', {
                         title: title,
                         start: started,
@@ -2512,6 +2549,7 @@ function init_calendar() {
 
             calendar.fullCalendar('unselect');
         },
+        
         editable: true,
         events: [{
             title: 'All Day Event',

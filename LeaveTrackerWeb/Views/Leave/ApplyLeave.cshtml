@@ -2,8 +2,32 @@
 @{
     ViewBag.Title = "ApplyLeave";
     List<LeaveTypes> LeaveTypeList = ViewData["LeaveTypes"] as List<LeaveTypes>;
+    List<HolidayList> Holidays = ViewData["Holidays"] as List<HolidayList>;
+    string strHolidays = string.Join(",", Holidays.Select(x=>x.HolidayDate.ToString("yyyy-MM-dd")).ToList());
 }
+<style type="text/css">
+    .fc-sat {
+        color : black;
+        opacity: 0.3;
+         background-color  : #cccc00;
+    }
 
+    .fc-sun {
+        color: black;
+        opacity: 0.3;
+         background-color  : #cccc00;
+    }
+
+    .fc-other-month {
+        opacity: 0.3;
+        color : grey;
+    }
+    .fc-Holiday {
+        opacity: 0.3 !important;
+        color : grey !important;
+        background-color  : green;
+    }
+</style>
 
 
 <!-- calendar modal -->
@@ -44,8 +68,8 @@
                         <option value="0" selected>Select</option>
                     </select>
                 </div>
-
-
+                @Html.Hidden("Holidays",strHolidays,new {@id ="hfdHolidays" })
+                <input type="hidden" id="hdfHolidays"/>
             </div>
             <div id='calendar'></div>
 
@@ -69,11 +93,11 @@
                             </div>
                         </div>
                         @*<div class="form-group">
-                            <label class="col-sm-3 control-label">Description</label>
-                            <div class="col-sm-9">
-                                <textarea class="form-control" style="height:55px;" id="descr" name="descr"></textarea>
-                            </div>
-                        </div>*@
+                                <label class="col-sm-3 control-label">Description</label>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control" style="height:55px;" id="descr" name="descr"></textarea>
+                                </div>
+                            </div>*@
                     </form>
                 </div>
             </div>
@@ -125,7 +149,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-          
+
         $("#drpLeaveTypeId").change(function () {
             $.ajax({
                 url: "GetSubLeaveType",
@@ -135,7 +159,7 @@
                 success: function (data) {
                     debugger;
                     var strObj = "<option value=0 selected>" + "Select" + "</option>";
-                    $.each(data, function (key,Leave) {
+                    $.each(data, function (key, Leave) {
                         strObj += "<option value=" + Leave.UxLeaveTypeId + ">" + Leave.UxLeaveTypeName + "</option>";
                     });
                     $('#drpSubLeaveType').html('');

@@ -7,6 +7,8 @@ using System.Web.Mvc;
 using System.Data.Entity.Migrations;
 using Model = LeaveTrackerWeb.Models;
 using LeaveTrackerWeb.Models.LeaveModel;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace LeaveTrackerWeb.Controllers.Leave
 {
@@ -17,8 +19,30 @@ namespace LeaveTrackerWeb.Controllers.Leave
         public ActionResult ApplyLeave()
         {
             List<LeaveTypes> LeaveTypeList = GetAllLeaveTypes();
+            List<HolidayList> Holidays = GetAllHolidays();
             ViewData["LeaveTypes"] = LeaveTypeList;
+            ViewData["Holidays"] = Holidays;
             return View();
+        }
+
+        private List<HolidayList> GetAllHolidays()
+        {
+            using (Model.ApplicationDbContext ctx = new Models.ApplicationDbContext())
+            {
+                try
+                {
+                    ctx.Configuration.ProxyCreationEnabled = false;
+                    return ctx.HolidayList.ToList();
+                }
+                catch (Exception ex)
+                {
+                    return new List<HolidayList>();
+                }
+                finally
+                {
+                    ctx.Configuration.ProxyCreationEnabled = true;
+                }
+            }
         }
 
         private List<LeaveTypes> GetAllLeaveTypes()
@@ -34,11 +58,12 @@ namespace LeaveTrackerWeb.Controllers.Leave
                 {
                     return new List<LeaveTypes>();
                 }
-                finally {
-                    ctx.Configuration.ProxyCreationEnabled =true;
+                finally
+                {
+                    ctx.Configuration.ProxyCreationEnabled = true;
                 }
             }
-            
+
         }
 
         [HttpGet]
@@ -51,11 +76,11 @@ namespace LeaveTrackerWeb.Controllers.Leave
                 try
                 {
                     ctx.Configuration.ProxyCreationEnabled = false;
-                    return Json(ctx.UxLeaveTypes.ToList().Where(x => x.LeaveTypeId == intLeaveTypeId).ToList(),JsonRequestBehavior.AllowGet);
+                    return Json(ctx.UxLeaveTypes.ToList().Where(x => x.LeaveTypeId == intLeaveTypeId).ToList(), JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception ex)
                 {
-                    return Json(new List<UxLeaveTypes>(),JsonRequestBehavior.AllowGet);
+                    return Json(new List<UxLeaveTypes>(), JsonRequestBehavior.AllowGet);
                 }
                 finally
                 {
@@ -65,11 +90,36 @@ namespace LeaveTrackerWeb.Controllers.Leave
 
         }
 
+        [HttpPost]
+        public ActionResult ApplyLeave(LeaveMapping Leave)
+        {
+            using (Model.ApplicationDbContext ctx = new Model.ApplicationDbContext())
+            {
+                try
+                {
+                    int TotalRequest = ctx.LeaveMapping.AsNoTracking().Count() > 0 ? ctx.LeaveMapping.AsNoTracking().Max(x => x.RequestId) : 0;
+                    Leave.RequestId = TotalRequest + 1;
+
+                    SqlParameter StartDate = new SqlParameter("@pinStartDate", Leave.StartDate.ToShortDateString());
+                    SqlParameter EndDate = new SqlParameter("@pinEndDate", Leave.EndDate.ToShortDateString());
+
+                    Leave.LeaveCount = ctx.Database.SqlQuery<int>("SELECT [dbo].[udf_TotalWorkingDays](@pinStartDate , @pinEndDate)", StartDate , EndDate ).SingleOrDefault();
+                    ctx.LeaveMapping.Add(Leave);
+                    ctx.SaveChanges();
+                    return Json("Success");
+                }
+                catch (Exception ex)
+                {
+                    return Json("Error");
+                }
+            }
+        }
+
         [HttpGet]
         public ActionResult LeaveDetails()
         {
             return View();
-           
+
         }
         [HttpGet]
         public ActionResult Holidays()
@@ -95,8 +145,8 @@ namespace LeaveTrackerWeb.Controllers.Leave
                     ctx.Configuration.ProxyCreationEnabled = true;
                 }
             }
-           
+
         }
-           
+
     }
 }

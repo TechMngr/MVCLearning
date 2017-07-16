@@ -14,6 +14,7 @@
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-notify.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/dataTables.bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/nprogress.css" rel="stylesheet" />   
     <link href="~/Content/fullcalendar.css" rel="stylesheet" />
     <link href="~/Libs/Gentelella/css/custom.min.css" rel="stylesheet" />
@@ -25,7 +26,7 @@
         }
     </style>
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
-
+    <script src="~/Scripts/jquery.dataTables.min.js"></script>
 </head>
 <body class="nav-md">
     <div class="container body">
@@ -40,7 +41,7 @@
                     <div class="profile clearfix">
 
                         <div class="profile_info">
-
+                            <input type="hidden" id="hdfUserID" value="@User.Identity.GetUserId()"/>
                             <h2>Welcome, @User.Identity.GetUserName() </h2>
                         </div>
                         <div class="clearfix"></div>
@@ -226,6 +227,7 @@
    
     <script src="~/Scripts/bootstrap-notify.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+ 
     <script src="~/Scripts/fastclick.js"></script>
     <script src="~/Scripts/nprogress.min.js"></script>
 
