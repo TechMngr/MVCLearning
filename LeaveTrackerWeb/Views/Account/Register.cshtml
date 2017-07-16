@@ -1,0 +1,97 @@
+﻿@model LeaveTrackerWeb.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Leave Tracker | </title>
+    <!-- Bootstrap -->
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- NProgress -->
+    <link href="~/Content/nprogress.css" rel="stylesheet" />
+
+
+    <!-- Custom Theme Style -->
+    <link href="~/Libs/Gentelella/css/custom.css" rel="stylesheet" />
+
+
+</head>
+<body class="login">
+    <div>
+        <a class="hiddenanchor" id="signup"></a>
+        <a class="hiddenanchor" id="signin"></a>
+        <div class="login_wrapper">
+            <div id="register" class="animate form ">
+                <section class="login_content">
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <h1>Create Account</h1>
+                        <div>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Email", @required = true, @type = "email" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            @*<input type="email" class="form-control" placeholder="Email" required="" />*@
+                        </div>
+                        <div>
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password", @required = true, @type = "password" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        </div>
+                        <div>
+                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @placeholder = "Confirm Password", @required = true, @type = "password" })
+                            @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                        </div>
+                        <div>
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "FirstName", @required = true, @type = "text" })
+                            @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                        </div>
+                        <div>
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "LastName", @required = true, @type = "text" })
+                            @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                        </div>
+                        <div>
+                            @Html.TextBoxFor(m => m.EmployeeNo, new { @class = "form-control", @placeholder = "EmployeeNo", @required = true, @type = "text" })
+                            @Html.ValidationMessageFor(m => m.EmployeeNo, "", new { @class = "text-danger" })
+                        </div>
+                        <div>
+                            @Html.TextBoxFor(m => m.PhoneNo, new { @class = "form-control", @placeholder = "Phone Number", @required = true, @type = "text" })
+                            @Html.ValidationMessageFor(m => m.EmployeeNo, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn btn-default submit">Submit</button>
+
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="separator">
+                            <p class="change_link">
+                                Already a member ?
+                                @Html.ActionLink("Log in", "Login", "Account", null, new { @class = "to_register" })
+                            </p>
+                            <div class="clearfix"></div>
+                            <br />
+                            <div>
+                                <h1><i class="fa fa-paw"></i> Leave Tracker</h1>
+                                <p>©2016 All Rights Reserved. Leave Tracker TCS</p>
+                            </div>
+                        </div>
+                    }
+                </section>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

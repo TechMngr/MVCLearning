@@ -1,0 +1,79 @@
+﻿@model LeaveTrackerWeb.Models.ApplicationUser
+@using LeaveTrackerWeb.Models;
+@{
+    ViewBag.Title = "EmployeeDetailsPartial";
+    List<Project> ProjectList = ViewData["ProjectList"] as List<Project>;
+}
+
+<div>
+    <br>
+    <form method="post">
+        <div class="form-group">
+            <label class="control-label col-md-3 col-sm-3 col-xs-3">First Name</label>
+            <div class="col-md-9 col-sm-9 col-xs-9">
+                @Html.TextBoxFor(x => x.FirstName, new { @class = "form-control" })
+                @Html.HiddenFor(x => x.Id)
+            </div>
+        </div>
+        <div class="form-group row">
+            <div>
+                <br />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3 col-sm-3 col-xs-3">Last Name</label>
+            <div class="col-md-9 col-sm-9 col-xs-9">
+                @Html.TextBoxFor(x => x.LastName, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group row">
+            <div>
+                <br />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3 col-sm-3 col-xs-3">Phone Number</label>
+            <div class="col-md-9 col-sm-9 col-xs-9">
+                @Html.TextBoxFor(x => x.PhoneNumber, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group row">
+            <div>
+                <br />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3 col-sm-3 col-xs-3">Employee No</label>
+            <div class="col-md-9 col-sm-9 col-xs-9">
+                @Html.TextBoxFor(x => x.EmployeeNo, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group row">
+            <div>
+                <br />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3 col-sm-3 col-xs-3">Project</label>
+            <div class="col-md-9 col-sm-9 col-xs-9">
+                @Html.DropDownListFor(x=> x.ProjectId, new SelectList(ProjectList,"ProjectId","ProjectName",Model.ProjectId),"Select", new {@class= "form-control" })
+            </div>
+        </div>
+        <div class="form-group row">
+            <div>
+                <br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div>
+                <br />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-9 col-md-offset-3">
+                <input name="action" type="button" id="btnClear" value="Clear" class="btn btn-primary pull-right" data-dismiss="modal" aria-label="Close" />
+                <input name="action" type="submit" id="btnUpdateInfo" value="Update Information" class="btn btn-success pull-right" />
+            </div>
+        </div>
+    </form>
+</div>

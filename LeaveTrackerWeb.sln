@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeaveTrackerWeb", "LeaveTrackerWeb\LeaveTrackerWeb.csproj", "{3E27CA8F-34AD-4844-AA70-8A15374CBFEB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3E27CA8F-34AD-4844-AA70-8A15374CBFEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E27CA8F-34AD-4844-AA70-8A15374CBFEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E27CA8F-34AD-4844-AA70-8A15374CBFEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E27CA8F-34AD-4844-AA70-8A15374CBFEB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 2
+		SccProjectName0 = \u0022$/Common/CI/CI\u0020Projects/LeaveTrackerWeb\u0022,\u0020JLMRBAAA
+		SccLocalPath0 = .
+		SccProvider0 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
+		CanCheckoutShared = false
+		SccProjectUniqueName1 = LeaveTrackerWeb\\LeaveTrackerWeb.csproj
+		SccLocalPath1 = .
+		SccProjectFilePathRelativizedFromConnection1 = LeaveTrackerWeb\\
+	EndGlobalSection
+EndGlobal
