@@ -1,0 +1,64 @@
+﻿
+@model LeaveTrackerWeb.Models.LeaveModel.HolidayList
+
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#datepicker").datepicker({
+            format: "dd/mm/yyyy",
+            useCurrent: false,
+            defaultDate: new Date()
+        });
+    });
+</script>
+
+
+<div>
+    <br>
+    <form method="post">
+        <div class="form-group">
+            <label class="control-label col-md-3 col-sm-3 col-xs-3">Date Description</label>
+            <div class="col-md-9 col-sm-9 col-xs-9">
+                @Html.TextAreaFor(x => x.DateDescription, new { @id = "txtDateDescription", @class = "form-control" })
+                @Html.HiddenFor(x => x.HolidayId)
+            </div>
+        </div>
+        <div class="form-group row">
+            <div>
+                <br />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3 col-sm-3 col-xs-3">Holiday date</label>
+            <div class='input-group date' id='datetimepicker1'>
+                <div class="col-md-9 col-sm-9 col-xs-9">
+                    @Html.TextBoxFor(x => x.HolidayDate, new { @id = "datepicker", @data_format = "dd/MM/yyyy" })
+                </div>
+            </div>
+
+        </div>
+        <div class="form-group row">
+            <div>
+                <br />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-9 col-md-offset-3">
+                <input name="action" type="button" id="btnClear" value="Clear" class="btn btn-primary pull-right" data-dismiss="modal" aria-label="Close" />
+                @if (Model.HolidayId > 0)
+                {
+                    <input name="action" type="submit" id="btnUpdateHoliday" value="Update Holiday" class="btn btn-success pull-right" />
+                }
+                else
+                {
+                    <input name="action" type="submit" id="btnAddHoliday" value="Add Holiday" class="btn btn-success pull-right" />
+                }
+            </div>
+        </div>
+    </form>
+</div>
+

@@ -1,54 +1,140 @@
 ﻿@model IEnumerable<LeaveTrackerWeb.Models.LeaveModel.HolidayList>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#datatable').DataTable({
+            columnDefs: [{ orderable: false, "targets": [-1, -2] }]
+        });
 
-@{
+        $('i[data-update=Yes]').click(function () {
+            var id = $(this).attr('data-id');
+            $.ajax({
+                url: '@Url.Action("HolidayDetails", "Leave")',
+                data: { HolidayId: id /* add other additional parameters */ },
+                cache: false,
+                type: "Get",
+                dataType: "html",
+                success: function (data, textStatus, XMLHttpRequest) {
+                    $('#ContentBody').empty();
+                    $('#ContentBody').html(data);
+                }
+            });
+        });
 
-}
+        $('i[data-delete=Yes]').click(function () {
+            var id = $(this).attr('data-id');
+            $('#hdfHolidayDelId').val(id);
+        });
+
+        var message = '@ViewBag.message';
+
+        if (message != null && message != "") {
+            ShowMessage(message, 'success');
+        }
+    });
+</script>
+
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Holidays</title>
 </head>
 <body>
-    <div class="container">
-        <p>
-            <button class="btn btn-default">@Html.ActionLink("Add Holiday", "Create")</button> 
-        </p>
-        <table class="table table-responsive table-bordered table-striped">
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.HolidayDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.DateDescription)
-                </th>
-                <th></th>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Holiday List</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li>
+                        <a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content "></div>
+            <table id="datatable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th width="40%">Holiday Date</th>
+                        <th width="40%">Date Discription</th>
+                        <th width="10%"> Edit </th>
+                        <th width="10%"> Delete </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td width="35%">
+                                @Html.Label(item.HolidayDate.ToShortDateString())
+                            </td>
+                            <td width="35%">
+                                @Html.Label(item.DateDescription)
+                            </td>
+                            <td width="15%">
+                                <i class="fa fa-pencil-square-o" data-Id="@item.HolidayId" data-update="Yes" data-toggle="modal" data-target="#OpenProjectModal"></i>
+                            </td>
+                            <td width="15%">
+                                <i class="fa fa-trash-o" data-Id="@item.HolidayId" data-delete="Yes" data-toggle="modal" data-target="#OpenDeleteModal"></i>
+                            </td>
+                        </tr>
+                    }
 
-            </tr>
+                </tbody>
 
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.HolidayDate.Day) /
-                        @Html.DisplayFor(modelItem => item.HolidayDate.Month) /
-                        @Html.DisplayFor(modelItem => item.HolidayDate.Year)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DateDescription)
-                    </td>
-                    <td>
-                        <button class="btn btn-default">@Html.ActionLink("Delete Holiday", "Delete", new { id = item.HolidayId })</button>  
-                    </td>
-
-                </tr>
-            }
-
-        </table>
-
+            </table>
+            <button id="AddProject" class="btn btn-sm btn-success btn-block" type="button" data-update="Yes" data-toggle="modal" data-target="#OpenProjectModal"> <i class="fa fa-plus" aria-hidden="true"></i> Add Holiday</button>
+        </div>
     </div>
 
+    @*added for model*@
+    <div class="modal fade docs-cropped" id="OpenProjectModal" aria-hidden="true" role="dialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="getCroppedCanvasTitle">Holiday Details</h4>
+                </div>
+                <div class="modal-body" id="ContentBody">
+                    @{
+                        Html.RenderAction("HolidayDetails", "Leave");
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div><!-- /.modal -->
+    <!-- Show the cropped image in modal -->
+    <div class="modal fade docs-cropped" id="OpenDeleteModal" aria-hidden="true" role="dialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="getCroppedCanvasTitle">Holiday Details</h4>
+                </div>
+                <div class="modal-body" id="ContentBody">
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-3"></label>
+                        <div class="col-md-9 col-sm-9 col-xs-9">
+
+                            @Html.Label("Are you sure want to delete Holiday?")
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input name="action" type="button" id="btnClear" value="No" class="btn btn-default pull-right" data-dismiss="modal" aria-label="Close" />
+                    @using (Html.BeginForm("DeleteHoliday", "Leave", FormMethod.Post))
+                    {
+                        <input type="hidden" name="HolidayDelId" id="hdfHolidayDelId" />
+                        <input name="action" type="submit" id="btnDeleteHoliday" value="Yes" class="btn btn-success pull-right" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div><!-- /.modal -->
 </body>
-</html>
+</html> 

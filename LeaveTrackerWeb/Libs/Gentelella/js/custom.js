@@ -2417,29 +2417,26 @@ function init_calendar() {
             center: 'title',
             right: 'next,nextYear'
         },
-       
-        showNonCurrentDates :true,
-      
+        showNonCurrentDates: true,
         fixedWeekCount: false,
         firstDay: 1,
         selectable: true,
-        dayRender: function(date, cell){
+        dayRender: function (date, cell) {
             var Holidays = new Array();
             var Holidays = $("#hfdHolidays").val().split(",");
-       
+
             if ($.inArray(date.format(), Holidays) != -1) {
-                debugger;
+
                 $(cell).addClass('fc-Holiday');
             }
         },
 
         select: function (start, end, allDay) {
-            debugger;
+
             var Holidays = new Array();
             var Holidays = $("#hfdHolidays").val().split(",");
-            
-            if ($.inArray(start.format(), Holidays) != -1)
-            {
+
+            if ($.inArray(start.format(), Holidays) != -1) {
                 ShowMessage("You can not apply leave for holiday", "info");
                 return;
             }
@@ -2452,8 +2449,7 @@ function init_calendar() {
                 ShowMessage("Please select Leave and Leave Type", "info");
                 return;
             }
-            else
-            {
+            else {
                 if ($('#drpSubLeaveType').val() == 0) {
                     ShowMessage("Please select Leave Type", "info");
                     return;
@@ -2468,14 +2464,14 @@ function init_calendar() {
                     }
                 }
             }
-               
+
             $('#fc_create').click();
-            debugger;
+
             started = start;
             ended = end;
 
             $(".antosubmit").on("click", function () {
-                debugger;
+
                 var title = $("#title").val();
                 if (end) {
                     ended = end;
@@ -2485,7 +2481,7 @@ function init_calendar() {
 
                 // code to add leave in database
                 var LeaveObj = new Object();
-                LeaveObj.EmployeeId =$('#hdfUserID').val();
+                LeaveObj.EmployeeId = $('#hdfUserID').val();
                 LeaveObj.LeaveTypeId = $('#drpLeaveTypeId').val();
                 LeaveObj.UxLeaveTypeId = $('#drpSubLeaveType').val();
                 LeaveObj.StartDate = started;;
@@ -2495,34 +2491,30 @@ function init_calendar() {
 
                 $.ajax({
                     url: "ApplyLeave",
-                    type : "Post",
+                    type: "Post",
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify(LeaveObj),
-                    dataType : "json",
-                    success: function ( response ) {
+                    dataType: "json",
+                    success: function (response) {
+                        debugger;
+                        if (title) {
+                            calendar.fullCalendar('renderEvent', {
+                                title: title,
+                                start: started,
+                                end: end,
+                                allDay: allDay,
+                                id: parseInt(response.LeaveMappingId),
+                                leaveTypeId: parseInt(response.LeaveTypeId),
+                                uxLeaveTypeId: parseInt(response.UxLeaveTypeId)
+                            });
+                        }
                         ShowMessage("Leave Applied Successfully", "success");
                     },
-                    error : function(){
+                    error: function () {
                         alert('hi');
                     }
                 });
 
-
-                //
-
-
-
-                if (title) {
-                    debugger;
-                    calendar.fullCalendar('renderEvent', {
-                        title: title,
-                        start: started,
-                        end: end,
-                        allDay: allDay
-                    },
-                      true // make the event "stick"
-                    );
-                }
 
                 $('#title').val('');
 
@@ -2532,54 +2524,209 @@ function init_calendar() {
 
                 return false;
             });
+
         },
         eventClick: function (calEvent, jsEvent, view) {
+
             debugger;
+
+
+            if (calEvent.leaveTypeId == 1) {
+                $("#lblTitleEdit").text("Leave Description")
+            }
+            else {
+                $("#lblTitleEdit").text("Ux Leave ids")
+            }
+
+
+
             $('#fc_edit').click();
             $('#title2').val(calEvent.title);
 
             categoryClass = $("#event_type").val();
 
             $(".antosubmit2").on("click", function () {
-                calEvent.title = $("#title2").val();
 
-                calendar.fullCalendar('updateEvent', calEvent);
-                $('.antoclose2').click();
+                calEvent.title = $("#title2").val();
+                calendar.fullCalendar('unselect');
+
+                var LeaveObj = new Object();
+                LeaveObj.EmployeeId = $('#hdfUserID').val();
+                LeaveObj.LeaveTypeId = calEvent.leaveTypeId;
+                LeaveObj.UxLeaveTypeId = calEvent.uxLeaveTypeId;
+                LeaveObj.StartDate = calEvent.start;;
+                LeaveObj.EndDate = calEvent.end;
+                LeaveObj.LeaveStatusId = 1;
+                LeaveObj.LeaveDescription = calEvent.title;
+                LeaveObj.LeaveMappingId = calEvent.id;
+
+                $.ajax({
+                    url: "UpdaateLeave",
+                    type: "Post",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(LeaveObj),
+                    dataType: "json",
+                    success: function (response) {
+                        ShowMessage("Leave Updated Successfully", "info");
+                        calendar.fullCalendar('updateEvent', calEvent);
+                    },
+                    error: function () {
+                        alert('error while applying leave');
+                    }
+                });
+
+                calendar.fullCalendar('rerenderEvents')
+                calendar.fullCalendar('unselect');
+                $('.antoclose3').click();
             });
 
-            calendar.fullCalendar('unselect');
-        },
-        
-        editable: true,
-        events: [{
-            title: 'All Day Event',
-            start: new Date(y, m, 1)
-        }, {
-            title: 'Long Event',
-            start: new Date(y, m, d - 5),
-            end: new Date(y, m, d - 2)
-        }, {
-            title: 'Meeting',
-            start: new Date(y, m, d, 10, 30),
-            allDay: false
-        }, {
-            title: 'Lunch',
-            start: new Date(y, m, d + 14, 12, 0),
-            end: new Date(y, m, d, 14, 0),
-            allDay: false
-        }, {
-            title: 'Birthday Party',
-            start: new Date(y, m, d + 1, 19, 0),
-            end: new Date(y, m, d + 1, 22, 30),
-            allDay: false
-        }, {
-            title: 'Click for Google',
-            start: new Date(y, m, 28),
-            end: new Date(y, m, 29),
-            url: 'http://google.com/'
-        }]
-    });
 
+            $('#antoDelete2').on("click", function () {
+                debugger;
+                var LeaveObj = new Object();
+                LeaveObj.EmployeeId = $('#hdfUserID').val();
+                LeaveObj.LeaveTypeId = calEvent.leaveTypeId;
+                LeaveObj.UxLeaveTypeId = calEvent.uxLeaveTypeId;
+                LeaveObj.StartDate = calEvent.start;;
+                LeaveObj.EndDate = calEvent.end;
+                LeaveObj.LeaveStatusId = 1;
+                LeaveObj.LeaveDescription = calEvent.title;
+                LeaveObj.LeaveMappingId = calEvent.id;
+                $.ajax({
+                    url: "DeleteLeave",
+                    type: "Post",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(LeaveObj),
+                    dataType: "json",
+                    success: function (response) {
+                        debugger;
+                        calendar.fullCalendar('removeEvents', calEvent._id);
+                        calendar.fullCalendar('refresh');
+                        ShowMessage("Leave Delete Successfully", "info");
+                    },
+                    error: function () {
+                        alert('error ');
+                    }
+                });
+                calendar.fullCalendar('unselect');
+                $('.antoclose3').click();
+                return false;
+            });
+
+            //$('.antoclose3').click();           
+        },
+        // Drag Event
+        eventDrop: function (event, delta, revertFunc) {
+
+            if (!confirm("Are you sure want to change leave Start date : " + event.start.toJSON().slice(0, 10).split("-").reverse().join("/") + " & End Date : " + new Date(event.end - (24 * 60 * 60 * 1000)).toJSON().slice(0, 10).split("-").reverse().join("/"))) {
+                revertFunc();
+            }
+            else {
+                var LeaveObj = new Object();
+                LeaveObj.EmployeeId = $('#hdfUserID').val();
+                LeaveObj.LeaveTypeId = event.leaveTypeId;
+                LeaveObj.UxLeaveTypeId = event.uxLeaveTypeId;
+                LeaveObj.StartDate = event.start;;
+                LeaveObj.EndDate = event.end;
+                LeaveObj.LeaveStatusId = 1;
+                LeaveObj.LeaveDescription = event.title;
+                LeaveObj.LeaveMappingId = event.id;
+
+                $.ajax({
+                    url: "UpdaateLeave",
+                    type: "Post",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(LeaveObj),
+                    dataType: "json",
+                    success: function (response) {
+                        ShowMessage("Leave Updated Successfully", "info");
+                        calendar.fullCalendar('updateEvent', event);
+                    },
+                    error: function () {
+                        alert('error while updating leave');
+                    }
+                });
+                calendar.fullCalendar('rerenderEvents')
+                calendar.fullCalendar('unselect');
+            }
+
+        },
+        //Resize Event
+        eventResize: function (event, delta, revertFunc) {
+            debugger;
+            if (!confirm("Are you sure want to change leave Start date : " + event.start.toJSON().slice(0, 10).split("-").reverse().join("/") + " & End Date : " + new Date(event.end - (24 * 60 * 60 * 1000)).toJSON().slice(0, 10).split("-").reverse().join("/"))) {
+                revertFunc();
+            }
+            else {
+                var LeaveObj = new Object();
+                LeaveObj.EmployeeId = $('#hdfUserID').val();
+                LeaveObj.LeaveTypeId = event.leaveTypeId;
+                LeaveObj.UxLeaveTypeId = event.uxLeaveTypeId;
+                LeaveObj.StartDate = event.start;;
+                LeaveObj.EndDate = event.end;
+                LeaveObj.LeaveStatusId = 1;
+                LeaveObj.LeaveDescription = event.title;
+                LeaveObj.LeaveMappingId = event.id;
+
+                $.ajax({
+                    url: "UpdaateLeave",
+                    type: "Post",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(LeaveObj),
+                    dataType: "json",
+                    success: function (response) {
+                        ShowMessage("Leave Updated Successfully", "info");
+                        calendar.fullCalendar('updateEvent', event);
+                    },
+                    error: function () {
+                        alert('error while updating leave');
+                    }
+                });
+                calendar.fullCalendar('rerenderEvents')
+                calendar.fullCalendar('unselect');
+            }
+
+        },
+        editable: true,
+        displayEventTime: false,
+        //Display all events 
+        events: function (start, end, timezone, callback) {
+            $.ajax({
+                url: 'GetCalenderLeavesEvents',
+                dataType: 'JSON',
+                data: {
+                    // our hypothetical feed requires UNIX timestamps
+                    start: start.toISOString(),
+                    end: end.toISOString()
+                },
+                success: function (doc) {
+
+                    var events = [];
+                    $.each(doc, function (key, value) {
+
+                        events.push({
+                            title: value.title,
+                            start: value.start,
+                            end: value.end,
+                            id: parseInt(value.Id),
+                            leaveTypeId: parseInt(value.LeaveTypeId),
+                            uxLeaveTypeId: parseInt(value.UxLeaveTypeId),
+                            allDay: true
+                        })
+
+                    })
+
+                    callback(events);
+
+                },
+                error: function () {
+                    alert('error');
+                }
+            });
+
+        }
+
+    });
 };
 
 /* DATA TABLES */
@@ -2825,8 +2972,6 @@ function init_morris_charts() {
     }
 
 };
-
-
 
 /* ECHRTS */
 

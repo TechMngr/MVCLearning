@@ -59,18 +59,31 @@
         <div class="x_content">
             <div class="row">
                 <div class="col-md-6">
-                    <label> Leave </label>
-                    @Html.DropDownList("drpLeaveType", new SelectList(LeaveTypeList, "LeaveTypeId", "LeaveTypeName"), "Select", new { @id = "drpLeaveTypeId" })
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label> Leave </label>
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownList("drpLeaveType", new SelectList(LeaveTypeList, "LeaveTypeId", "LeaveTypeName"), "Select", new { @id = "drpLeaveTypeId", @class = "form-control", @style = "width: 50%;" })
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6">
-                    <label> Leave Type</label>
-                    <select id="drpSubLeaveType">
-                        <option value="0" selected>Select</option>
-                    </select>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label> Leave Type</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select id="drpSubLeaveType" class="form-control" style="width:50%">
+                                <option value="0" selected>Select</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 @Html.Hidden("Holidays",strHolidays,new {@id ="hfdHolidays" })
                 <input type="hidden" id="hdfHolidays"/>
             </div>
+            <br />
             <div id='calendar'></div>
 
         </div>
@@ -89,7 +102,7 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label" id="lblTitle">Leave Description</label>
                             <div class="col-sm-9">
-                                <textarea type="text" class="form-control" id="title" name="title"></textarea>
+                                <textarea type="text" class="form-control" id="title" name="title" required></textarea>
                             </div>
                         </div>
                         @*<div class="form-group">
@@ -121,24 +134,27 @@
                 <div id="testmodal2" style="padding: 5px 20px;">
                     <form id="antoform2" class="form-horizontal calender" role="form">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">Title</label>
+                            <label class="col-sm-3 control-label" id="lblTitleEdit">Description</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="title2" name="title2">
+                                <textarea type="text" class="form-control" id="title2" name="title2" required> </textarea>
                             </div>
                         </div>
-                        <div class="form-group">
+                        @*<div class="form-group">
                             <label class="col-sm-3 control-label">Description</label>
                             <div class="col-sm-9">
                                 <textarea class="form-control" style="height:55px;" id="descr2" name="descr"></textarea>
                             </div>
-                        </div>
+                        </div>*@
 
                     </form>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default antoclose2" data-dismiss="modal">Close</button>
+               
                 <button type="button" class="btn btn-primary antosubmit2">Save changes</button>
+                <button type="button" id="antoDelete2" class="btn btn-danger" data-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-info antoclose3" data-dismiss="modal">Close</button>
+
             </div>
         </div>
     </div>
@@ -157,7 +173,7 @@
                 method: "Get",
                 type: "Json",
                 success: function (data) {
-                    debugger;
+              
                     var strObj = "<option value=0 selected>" + "Select" + "</option>";
                     $.each(data, function (key, Leave) {
                         strObj += "<option value=" + Leave.UxLeaveTypeId + ">" + Leave.UxLeaveTypeName + "</option>";
